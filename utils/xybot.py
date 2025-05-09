@@ -435,6 +435,14 @@ class XYBot:
         except Exception as e:
             logger.error(f"更新联系人信息时发生异常: {str(e)}")
 
+    async def process_mod_message(self, message: Dict[str, Any]):
+        """处理接收到的联系人变动消息"""
+
+        logger.info("接收到联系人变动消息")
+        logger.info("变动消息信息：{}", message)
+        logger.info("变动的群聊id：{}", message.get("UserName").get("string"))
+        # 处理变动消息
+
     async def process_message(self, message: Dict[str, Any]):
         """处理接收到的消息"""
 

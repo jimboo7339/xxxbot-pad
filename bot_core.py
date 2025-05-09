@@ -639,9 +639,13 @@ async def bot_core():
         # 检查data是否为字典类型
         if isinstance(data, dict):
             messages = data.get("AddMsgs")
+            modData = data.get("ModContacts")
             if messages:
                 for message in messages:
                     asyncio.create_task(xybot.process_message(message))
+            if modData:
+                for message in modData:
+                    asyncio.create_task(xybot.process_mod_message(message))
         elif data:  # 如果data不是字典但有值，记录日志
             logger.warning(f"Unexpected data type: {type(data)}, value: {data}")
 
