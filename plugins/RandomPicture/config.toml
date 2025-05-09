@@ -1,0 +1,13 @@
+[RandomPicture]
+enable = true
+command = ["随机图片", "随机图图"]
+group_list = ["47747102960@chatroom","45378199839@chatroom"]
+command_hs = ["随机黑丝"]
+command_bs = ["随机白丝"]
+command_mn = ["随机美女"]
+command_boy = ["随机帅哥"]
+url_command = "https://api.52vmy.cn/api/img/tu/man?type=text"
+url_hs = "https://api.zhcnli.cn/api/sjtp/tupian.php?type=hs"
+url_bs = "https://api.zhcnli.cn/api/sjtp/tupian.php?type=bs"
+url_mn = "https://api.zhcnli.cn/api/sjtp/tupian.php?type=mn"
+url_boy = "https://api.52vmy.cn/api/img/tu/boy?type=text"

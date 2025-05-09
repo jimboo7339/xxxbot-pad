@@ -4,14 +4,14 @@ services:
     container_name: xxxbot-pad
     restart: unless-stopped
     pull_policy: always # 确保每次都检查并拉取最新的镜像
+    # 添加command来确保entrypoint.sh有执行权限并执行它
+    command: ["sh", "-c", "chmod +x /app/entrypoint.sh && /app/entrypoint.sh"]
     ports:
-      - "9090:9090" # 管理后台端口
-      - "3000:3000" # WeTTy终端端口
+      - "10066:9090" # 管理后台端口
+      - "13000:3000" # WeTTy终端端口
     volumes:
       - ./:/app # 直接映射当前目录到容器的/app
-      - ./redis_data:/var/lib/redis
-    environment:
-      TZ: Asia/Shanghai
+      - redis_data:/var/lib/redis
 
 volumes:
   redis_data:

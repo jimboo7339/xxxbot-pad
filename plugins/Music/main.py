@@ -25,12 +25,12 @@ class Music(PluginBase):
         self.command_format = config["command-format"]
         self.play_command = config.get("play_command", "播放")
         self.search_results = {}
-        self.api_url = "https://www.hhlqilongzhu.cn/api/dg_wyymusic.php"
+        self.api_url = "https://www.hhlqilongzhu.cn/api/dg_kuwomusic.php"
 
     async def _fetch_song_list(self, song_name: str) -> list:
         """调用API获取歌曲列表."""
         params = {
-            "gm": song_name,
+            "msg": song_name,
         }
         try:
             async with aiohttp.ClientSession() as session:
@@ -52,8 +52,8 @@ class Music(PluginBase):
             if len(parts) == 2:
                 try:
                     num_title, singer = parts
-                    num = num_title.split("、")[0].strip()
-                    title = num_title.split("、")[1].strip()
+                    num = num_title.split(".")[0].strip()
+                    title = num_title.split(".")[1].strip()
                     song_list.append({"num": num, "title": title, "singer": singer.strip()})
                 except Exception as e:
                     logger.warning(f"解析歌曲列表失败，行内容：{line}， 错误信息: {e}")
@@ -62,7 +62,7 @@ class Music(PluginBase):
     async def _fetch_song_data(self, song_name: str, index: int) -> dict:
         """调用API获取歌曲信息，需要指定歌曲序号."""
         params = {
-            "gm": song_name,
+            "msg": song_name,
             "n": index,
             "type": "json",
         }
@@ -71,7 +71,7 @@ class Music(PluginBase):
                 async with session.get(self.api_url, params=params) as resp:
                     data = await resp.json()
                     logger.debug(f"获取歌曲详情API 响应: {data}")
-                    if data["code"] == 200:
+                    if data["code"] == "200":
                         return data
                     else:
                         logger.warning(f"获取歌曲信息失败，API返回：{data}")
@@ -97,7 +97,7 @@ class Music(PluginBase):
 
         if command[0] in self.command:  # 处理 "点歌" 命令
             if len(command) == 1:
-                await bot.send_at_message(message["FromWxid"], f"-----XYBot-----\n❌命令格式错误！{self.command_format}",
+                await bot.send_at_message(message["FromWxid"], f"-----WeBot-----\n❌命令格式错误！{self.command_format}",
                                           [message["SenderWxid"]])
                 return False  # 已处理错误消息，阻止其他插件
 
@@ -106,7 +106,7 @@ class Music(PluginBase):
             song_list = await self._fetch_song_list(song_name)
 
             if not song_list:
-                await bot.send_at_message(message["FromWxid"], f"-----XYBot-----\n❌未找到相关歌曲！",
+                await bot.send_at_message(message["FromWxid"], f"-----WeBot-----\n❌未找到相关歌曲！",
                                           [message["SenderWxid"]])
                 return False  # 已处理错误消息，阻止其他插件
 
@@ -129,26 +129,27 @@ class Music(PluginBase):
                     selected_song = self.search_results[message["FromWxid"]][index - 1]
                     song_data = await self._fetch_song_data(selected_song["title"], index)
                     if song_data:
-                        title = song_data["title"]
-                        singer = song_data["singer"]
+                        title = song_data["song_name"]
+                        singer = song_data["song_singer"]
                         url = song_data.get("link", "")
-                        music_url = song_data.get("music_url", "").split("?")[0]
+                        music_url = song_data.get("flac_url", "").split("?")[0]
                         cover_url = song_data.get("cover", "")
                         lyric = song_data.get("lrc", "")
 
-                        xml = f"""<appmsg appid="wx79f2c4418704b4f8" sdkver="0"><title>{title}</title><des>{singer}</des><action>view</action><type>3</type><showtype>0</showtype><content/><url>{url}</url><dataurl>{music_url}</dataurl><lowurl>{url}</lowurl><lowdataurl>{music_url}</lowdataurl><recorditem/><thumburl>{cover_url}</thumburl><messageaction/><laninfo/><extinfo/><sourceusername/><sourcedisplayname/><songlyric>{lyric}</songlyric><commenturl/><appattach><totallen>0</totallen><attachid/><emoticonmd5/><fileext/><aeskey/></appattach><webviewshared><publisherId/><publisherReqId>0</publisherReqId></webviewshared><weappinfo><pagepath/><username/><appid/><appservicetype>0</appservicetype></weappinfo><websearch/><songalbumurl>{cover_url}</songalbumurl></appmsg><fromusername>{bot.wxid}</fromusername><scene>0</scene><appinfo><version>1</version><appname/></appinfo><commenturl/>"""
+                        # xml = f"""<appmsg appid="wx79f2c4418704b4f8" sdkver="0"><title>{title}</title><des>{singer}</des><action>view</action><type>3</type><showtype>0</showtype><content/><url>{url}</url><dataurl>{music_url}</dataurl><lowurl>{url}</lowurl><lowdataurl>{music_url}</lowdataurl><recorditem/><thumburl>{cover_url}</thumburl><messageaction/><laninfo/><extinfo/><sourceusername/><sourcedisplayname/><songlyric>{lyric}</songlyric><commenturl/><appattach><totallen>0</totallen><attachid/><emoticonmd5/><fileext/><aeskey/></appattach><webviewshared><publisherId/><publisherReqId>0</publisherReqId></webviewshared><weappinfo><pagepath/><username/><appid/><appservicetype>0</appservicetype></weappinfo><websearch/><songalbumurl>{cover_url}</songalbumurl></appmsg><fromusername>{bot.wxid}</fromusername><scene>0</scene><appinfo><version>1</version><appname/></appinfo><commenturl/>"""
+                        xml = f"""<appmsg appid="wx79f2c4418704b4f8" sdkver="0"><title>{title}</title><des>{singer}</des><type>76</type><url>{url}</url><lowurl>{url}</lowurl><dataurl>{music_url}</dataurl><lowdataurl>{music_url}</lowdataurl><songalbumurl>{cover_url}</songalbumurl><songlyric>{lyric}</songlyric><appattach><cdnthumbaeskey/><aeskey/></appattach></appmsg>"""
                         await bot.send_app_message(message["FromWxid"], xml, 3)
                         return False  # 成功发送歌曲，阻止其他插件
                     else:
-                        await bot.send_at_message(message["FromWxid"], f"-----XYBot-----\n❌获取歌曲信息失败！",
+                        await bot.send_at_message(message["FromWxid"], f"-----WeBot-----\n❌获取歌曲信息失败！",
                                                   [message["SenderWxid"]])
                         return False  # 已处理错误消息，阻止其他插件
                 else:
-                    await bot.send_at_message(message["FromWxid"], f"-----XYBot-----\n❌无效的歌曲序号！",
+                    await bot.send_at_message(message["FromWxid"], f"-----WeBot-----\n❌无效的歌曲序号！",
                                               [message["SenderWxid"]])
                     return False  # 已处理错误消息，阻止其他插件
             except ValueError:
-                await bot.send_at_message(message["FromWxid"], f"-----XYBot-----\n❌请输入有效的歌曲序号！",
+                await bot.send_at_message(message["FromWxid"], f"-----WeBot-----\n❌请输入有效的歌曲序号！",
                                           [message["SenderWxid"]])
                 return False  # 已处理错误消息，阻止其他插件
 

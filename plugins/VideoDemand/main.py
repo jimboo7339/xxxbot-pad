@@ -51,6 +51,7 @@ class VideoDemand(PluginBase):
         self.random_video_url = config.get("random-video-url", "https://sj.tuituiya.cn/sjdsp/zsxjj669.php")  # 随机视频URL
         self.menu_image = config.get("menu-image", "https://d.kstore.dev/download/8150/shipin.jpg")
         self.cache_time = config.get("cache-time", 300)  # 菜单有效期5分钟
+        self.allowed_groups = config["allowed_groups"]
 
         # 房间状态
         self.room_status = {}
@@ -901,6 +902,12 @@ class VideoDemand(PluginBase):
         content = message.get("Content", "").strip()
         if content not in self.command:
             return True  # 不是菜单命令，继续执行后续处理
+        
+        group_id = message["FromWxid"]
+
+        # 检查群聊白名单
+        if "*" not in self.allowed_groups and group_id not in self.allowed_groups:
+            return False  # 阻止后续处理
 
         wxid = message.get("FromWxid")
         roomid = message.get("FromGroup", wxid)
@@ -942,6 +949,12 @@ class VideoDemand(PluginBase):
         # 严格匹配"看+数字"的格式
         if not re.match(r'^看\d+$', content):
             return True  # 不是视频请求命令，继续执行后续处理
+        
+        group_id = message["FromWxid"]
+
+        # 检查群聊白名单
+        if "*" not in self.allowed_groups and group_id not in self.allowed_groups:
+            return False  # 阻止后续处理
 
         wxid = message.get("FromWxid")
         roomid = message.get("FromGroup", wxid)
@@ -1102,6 +1115,12 @@ class VideoDemand(PluginBase):
         # 检查命令是否匹配
         if content not in self.random_command:
             return True  # 不是随机视频命令，继续执行后续处理
+        
+        group_id = message["FromWxid"]
+
+        # 检查群聊白名单
+        if "*" not in self.allowed_groups and group_id not in self.allowed_groups:
+            return False  # 阻止后续处理
 
         wxid = message.get("FromWxid")
         roomid = message.get("FromGroup", wxid)

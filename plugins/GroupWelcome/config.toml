@@ -1,5 +1,5 @@
 [GroupWelcome]
 enable = true
-welcome-message = "👆点我查看xxxbot-pad文档！"
-url = "https://github.com/NanSsye/xxxbot-pad"
+welcome-message = "欢迎入群！"
+url = "https://www.baidu.com"
 send-file = false  # 是否发送项目说明PDF文件，true为发送，false为不发送，不设置默认为发送否发送PDF文件

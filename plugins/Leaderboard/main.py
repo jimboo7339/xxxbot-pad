@@ -51,7 +51,7 @@ class Leaderboard(PluginBase):
             data.sort(key=lambda x: x[1], reverse=True)
             data = data[:self.max_count]
 
-            out_message = "-----XXXBot积分群排行榜-----"
+            out_message = "-----WeBot积分群排行榜-----"
             rank_emojis = ["👑", "🥈", "🥉"]
             for rank, (nickname, points) in enumerate(data, start=1):
                 emoji = rank_emojis[rank - 1] if rank <= 3 else ""
@@ -86,7 +86,7 @@ class Leaderboard(PluginBase):
             for result in results:
                 nicknames.extend(result)
 
-            out_message = "-----XXXBot积分排行榜-----"
+            out_message = "-----WeBot积分排行榜-----"
             rank_emojis = ["👑", "🥈", "🥉"]
             for rank, (i, nickname) in enumerate(zip(data, nicknames), start=1):
                 wxid, points = i
